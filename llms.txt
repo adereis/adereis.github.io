@@ -1,0 +1,13 @@
+# Ademar Reis
+
+> Director of Software Engineering at Red Hat, leading Azure Red Hat OpenShift. Twenty-five years on Linux, cloud infrastructure, and open source.
+
+## Posts
+
+- [The Square Root of 254](https://ademar.org/posts/the-square-root-of-254/): A kitchen-table experiment with Claude back in March, the interpretability paper Anthropic published last week, and the run I would like someone with a big enough machine to make.
+
+## Pages
+
+- [About](https://ademar.org/about/): I’m Ademar Reis, Director of Software Engineering at Red Hat. These days I work on Azure Red Hat OpenShift (ARO), managed Kubernetes built and run together with Microsoft on Azure.
+I’ve spent my career on Linux. I started in 2001 at a Linux distribution company in Brazil, and I’ve followed the platform up the stack ever since: from desktop and mobile systems, to the QtWebKit browser engine, to the KVM hypervisor at Red Hat, to the operating system underneath all of Amazon and AWS, and now to managed Kubernetes running in the cloud. Different layers, same substrate.
+

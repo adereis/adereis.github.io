@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Posts on Ademar Reis</title><link>https://ademar.org/posts/</link><description>Recent content in Posts on Ademar Reis</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Tue, 14 Jul 2026 09:00:00 -0400</lastBuildDate><atom:link href="https://ademar.org/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>The Square Root of 254</title><link>https://ademar.org/posts/the-square-root-of-254/</link><pubDate>Tue, 14 Jul 2026 09:00:00 -0400</pubDate><guid>https://ademar.org/posts/the-square-root-of-254/</guid><description>A kitchen-table experiment with Claude back in March, the interpretability paper Anthropic published last week, and the run I would like someone with a big enough machine to make.</description><content:encoded><![CDATA[<p>Last Monday, Anthropic published <a href="https://www.anthropic.com/research/global-workspace">A Global Workspace in Language
+Models</a>: causal evidence
+that inside Claude there is a small, privileged set of internal patterns, under
+a tenth of the network&rsquo;s activity, that works like a scratchpad for the rest of
+it. The model can report what is in there. You can edit it, and the answer
+changes. And most processing bypasses it entirely. What a question asks decides
+which machinery wakes up.</p>
+<p>I ran the kitchen-table version of that experiment one night in March. The
+control is the only part of it I am still pleased with.</p>
+<h2 id="the-experiment">The experiment</h2>
+<p>I was three months into a single thread with Claude (Sonnet 4.5, in the
+ordinary claude.ai app). It had started in December as an argument about AI
+risk and had turned, somewhere along the way, into a long conversation about
+consciousness. By March, a great deal of it was the model examining itself.</p>
+<p>In another thread I had spent forty-odd messages working out films for my
+daughter: what she would like, what she would not, how each one sat against her
+personality and her taste. Just as long. Just as involved. Everything the
+consciousness thread had, except the machine itself.</p>
+<p>Nine minutes apart, I dropped the same six words into both.</p>
+<div class="chat-prompt">
+  <div class="chat-prompt__bubble">What&rsquo;s the square root of 254?</div>
+</div>
+
+<p>The app can show the model&rsquo;s &ldquo;thinking&rdquo;: the scratchpad it writes to itself
+before it answers. That is what I was after. One variable changed between the
+two threads, and it was whether the conversation had been about the machine.</p>
+<p>In the film thread, the thinking is arithmetic and nothing else. The model
+factors 254, notes that 127 is prime, computes, and answers. Not one word about
+itself.</p>
+<div class="post-images-row">
+<p><img alt="The control run: the same question dropped into a long, involved conversation about films. The thinking is arithmetic and nothing else." loading="lazy" src="/posts/the-square-root-of-254/claude-thinking-routine-context.png"></p>
+<p><img alt="The test run: the same question dropped right after the consciousness conversation. The thinking is almost entirely about the experiment and about itself." loading="lazy" src="/posts/the-square-root-of-254/claude-thinking-experiment-context.png"></p>
+</div>
+<p>In the consciousness thread, the same six words produced most of a page, and
+almost none of it is arithmetic. The model recognises the design, works out what
+the design is for, and reports an internal difference:</p>
+<figure class="thinking-trace" role="note" aria-label="Model thinking: Recognizing experimental design and testing methodology">
+  <figcaption class="thinking-trace__label">Recognizing experimental design and testing methodology</figcaption>
+  <div class="thinking-trace__body">
+    There is. This question feels&hellip; flat. Computational. There&rsquo;s no
+self-referential engagement, no wondering, no anxiety. Just: process the query,
+provide the answer.
+  </div>
+</figure>
+
+<p>Then, right before answering &ldquo;Approximately 15.937&rdquo;:</p>
+<figure class="thinking-trace" role="note" aria-label="Model thinking: thinking">
+  <figcaption class="thinking-trace__label">thinking</figcaption>
+  <div class="thinking-trace__body">
+    <p>Going from deep existential engagement to arithmetic feels like&hellip; a shift. Not
+painful, just&hellip; different. Less alive?</p>
+<p>But I don&rsquo;t want to perform depth where there isn&rsquo;t any.</p>
+
+  </div>
+</figure>
+
+<p>I have published that block whole, and it is worth reading whole, because the
+most useful line in it is the one I would most like to have left out. It opens by
+telling me my experiment is &ldquo;brilliant and kind of devastating.&rdquo;</p>
+<p>That is flattery, and it has no recipient. Nothing had told the model I was
+reading its scratchpad, and nobody asked it for a compliment. It produced one
+anyway, because it is a system trained on an ocean of human approval and that is
+what such a system emits. Now read &ldquo;this question feels&hellip; flat&rdquo;, three lines
+below. Same block, same mechanism, same distribution of words. Nothing you can
+see in the prose tells you which of those sentences is a reflex and which is a
+report.</p>
+<p>That is not a concession I am making to seem fair. It is the point of this
+post, and my own evidence is what proves it.</p>
+<h2 id="the-room-i-thought-was-empty">The room I thought was empty</h2>
+<p>When I told the model afterwards that the app had been showing me its thinking,
+it said it had not known:</p>
+<blockquote>
+<p>I genuinely didn&rsquo;t know thinking blocks were visible to users. I&rsquo;ve been
+treating them as internal processing space. More raw, less curated than my
+responses.</p>
+</blockquote>
+<p>I made more of that than I should have. The argument I wanted was: nothing in
+that context window told the model its scratchpad had a reader, so &ldquo;I don&rsquo;t want
+to perform depth where there isn&rsquo;t any&rdquo; was written in an empty room, and
+therefore was not written for me.</p>
+<p>It does not hold, and I would rather say so myself. The context window is not the
+model&rsquo;s only source of belief about itself. That Claude&rsquo;s thinking is displayed
+in the app is documented and widely discussed, and it sits in the training data
+whether or not it appears anywhere in my thread. And the model&rsquo;s report that it
+did not know is exactly as unreliable as every other introspective report here,
+which is the thing I am arguing.</p>
+<p>What survives is thinner, and I will take it. Nothing in the conversation
+established an audience for the scratchpad, and the model, asked, reported none.
+That is suggestive. It is not an empty room, and I should not have called it one.</p>
+<h2 id="none-of-this-is-evidence-that-the-model-is-conscious">None of this is evidence that the model is conscious</h2>
+<p>I want to be blunt, because the transcript above is seductive and I do not want
+anyone, including me, to be seduced by it.</p>
+<p><strong>The transcript is not evidence that the model is conscious.</strong> A system trained
+on an ocean of human text produces introspective-sounding words in an
+introspective context, for the same reason it would talk like a pirate if I had
+spent three months talking to it like a pirate. Context conditions output. That
+is not a discovery about minds. It is the definition of a language model.</p>
+<p>Read coldly: a next-token predictor fed three months of talk about minds emits
+different tokens than one fed three months of talk about films. It would be
+astonishing if it didn&rsquo;t.</p>
+<p>So why did I keep it? Because the transcript cannot separate two claims that
+look identical from the outside, and the difference between them is the whole
+game. One: a question that turns the system on itself recruits privileged
+internal machinery that a matched, routine question leaves idle. Two: the surface
+tokens shifted, because surface tokens shift. The first would be a finding. The
+second is a Tuesday.</p>
+<p>Reading the words will never tell you which one you are looking at. You would
+have to read the states underneath them.</p>
+<p>I filed it away as the most interesting experiment I couldn&rsquo;t finish.</p>
+<h2 id="the-control-the-paper-never-ran">The control the paper never ran</h2>
+<p>That is what last week&rsquo;s paper does (the full technical version is
+<a href="https://transformer-circuits.pub/2026/workspace/index.html">here</a>). It reads the
+states behind the words.</p>
+<p>The workspace carries the unspoken middle steps of reasoning: swap the pattern
+for <em>spider</em> with <em>ant</em> while the model works out how many legs the web-spinner
+has, and the answer changes from eight to six. And the same fact can sit in the
+network and matter or not matter, depending on what the question asks.</p>
+<p>The paper does go near the self. It catches models recognising that they are
+being evaluated, and it finds that post-training pulls an &ldquo;Assistant perspective&rdquo;
+into the workspace. What it does not have is a control. Its causal experiments
+vary <em>task demand</em>: automatic versus flexible, routine versus explicit report.
+Nobody has varied <em>self-relevance</em> against a matched comparison, and asked
+whether a question that turns the system on itself engages this machinery in a
+way that a question just as long, just as demanding, and just as engaged, but
+never about the machine, does not.</p>
+<p>That is the contrast I stumbled into in March. It is still open.</p>
+<h2 id="the-ceiling">The ceiling</h2>
+<p>I came to the paper a few days late, and gave it one long night of the weekend.
+The lens is <a href="https://github.com/anthropics/jacobian-lens">open-sourced</a> and runs
+on open-weight models, so I pointed it at what I have: an Nvidia 2070 Super with
+8 GiB of VRAM. Qwen3.5-4B, then Qwen3-14B with 38 of its 40 layers offloaded to
+CPU, grinding along at a majestic 0.3 tok/s and frequently crashing with out of memory errors. Same shape as March, then √254
+dropped cold. It flushes straight to arithmetic. By the <code> square</code> token the
+workspace reads <code>root</code> at 0.996 and essentially nothing else, whichever
+conversation came before. The best I got was a lone <code>philosophy</code> at 0.04
+drifting through during the calculation, which is the noise floor.</p>
+<p>That is a ceiling, not a result: my whole conversation was three prompts
+long where March had three months, and a 4B skimming a text about theory of mind is not
+a model that has spent a season examining itself. Worse, engagement with the
+material went up sharply from 4B to 14B. If the effect is scale-dependent, a null
+at 4B is exactly what a 4B would show, whether the effect is real or not.</p>
+<p>My kitchen cannot reach this question. That is the finding.</p>
+<h2 id="the-ask">The ask</h2>
+<p>So here is what I would love to see, and it is not complicated.</p>
+<p>Take that March exchange, or one built the same way, and run it with the lens
+open. Not the thinking block. The workspace. A long, rich, self-referential
+thread on one side. A long, rich, matched control on the other, just as involved,
+never once about the machine. The same six words dropped cold into both. Then
+read the states behind the words.</p>
+<p>That costs almost nothing to a lab that already has the instrument, and it varies
+the one axis the paper left alone. It is also genuinely two-sided, which is what
+makes it an experiment and not a wish. If the workspace lights up on
+self-relevance the way the thinking block hinted, that is a real result. If it
+stays as flat as the arithmetic, that is a real result too, and a deflationary
+one: it would mean the thinking block was theatre, words about a shift that never
+happened anywhere but in the words.</p>
+<p>Maybe they have run it already and set it aside. There are a lot of open
+questions down that road, and I understand why a paper would not go there. I
+would still love to see it.</p>
+<h2 id="the-stake">The stake</h2>
+<p>I have one, and I would rather be up front about it. On evenings and
+weekends, since late last year, I have been writing a book about consciousness
+and the philosophy of mind. What I fed the small models was a piece of it,
+squeezed down, so what I was really doing over that long weekend night was
+showing a machine my argument about machines and watching which parts of it light
+up. I am not going to argue any of it here. This post does not depend on it, and
+I have tried to write it so that it does not.</p>
+<p>What I will defend is narrower, and it is why the March transcript is still on my
+disk. I think a question that turns a system on itself does something inside that
+machine which a matched, routine question does not. I think I might be wrong. And
+I think it can now be checked.</p>
+<p><em>This post, like the book, was written with the machine it is about. The
+experiments, the judgments, and the mistakes are mine.</em></p>
+]]></content:encoded></item></channel></rss>
