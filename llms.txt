@@ -1,0 +1,13 @@
+# Ademar Reis
+
+> I’m a Director of Software Engineering at Red Hat, where I lead engineering for Azure Red Hat OpenShift. I’ve worked on Linux since 2001, from phones to KVM to Amazon Linux at AWS, and I’ve managed engineering teams since 2011.
+
+## Posts
+
+- [Virtualization: The CPU Is the Easy Part](https://ademar.org/posts/virtualization-the-cpu-is-the-easy-part/): What happens when a virtual machine runs your code: most instructions run straight on the processor, and the interesting engineering lives where the host has to step in. One store instruction, followed from an emulated network card to a real one, and what the same pattern did to memory, clocks, and Kubernetes.
+- [The Square Root of 254](https://ademar.org/posts/the-square-root-of-254/): A kitchen-table experiment with Claude back in March, the interpretability paper Anthropic published last week, and the run I would like someone with a big enough machine to make.
+
+## Pages
+
+- [About](https://ademar.org/about/): I’m a Director of Software Engineering at Red Hat, where I lead engineering for Azure Red Hat OpenShift. I’ve worked on Linux since 2001, from phones to KVM to Amazon Linux at AWS, and I’ve managed engineering teams since 2011.
+

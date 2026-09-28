@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 640" width="720" height="640" role="img" aria-labelledby="t d">
+  <title id="t">One device store, five endings</title>
+  <desc id="d">Five rows, with the columns in stack order: the guest, the host's userspace and kernel, and the hardware. Emulated e1000: every register access goes down to KVM in the host kernel and back up to QEMU in userspace. virtio: the same round trip, but only one notification per batch. vhost-net: it stops in the host kernel and QEMU stays asleep. vhost-user: it goes down to the kernel and back up to a separate userspace process chosen for the job. VFIO and SR-IOV: it goes straight down to a real card, past the host software, which stays asleep, with the IOMMU fencing what the card can touch.</desc>
+
+  <style>
+    .plate { fill: #f4f1ea; stroke: #ddd7cb; stroke-width: 1; }
+    text   { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; fill: #2a2732; }
+    .mono  { font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .h     { font-size: 24px; font-weight: 600; }
+    .b     { font-size: 22px; font-weight: 600; }
+    .l     { font-size: 22px; }
+    .s     { font-size: 22px; fill: #6c6676; }
+    .mid   { text-anchor: middle; }
+    .end   { text-anchor: end; }
+  </style>
+  <defs>
+    <marker id="a-ink" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#2a2732"/></marker>
+    <marker id="a-ink-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#2a2732"/></marker>
+    <marker id="a-sub" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#d68228"/></marker>
+    <marker id="a-sub-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#d68228"/></marker>
+    <marker id="a-cost" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#994637"/></marker>
+    <marker id="a-cost-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#994637"/></marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" fill="#f4f1ea"/><line x1="4" y1="0" x2="4" y2="8" stroke="#994637" stroke-width="2"/></pattern>
+  </defs>
+
+  <rect class="plate" x="0.5" y="0.5" width="719" height="639" rx="14"/>
+
+  <path d="M 200 64 L 200 58 L 530 58 L 530 64" fill="none" stroke="#6c6676" stroke-width="1.5"/>
+  <text class="s mid" x="365" y="46">the host</text>
+  <text class="s mid" x="100" y="90">guest</text>
+  <text class="s mid" x="280" y="90">userspace</text>
+  <text class="s mid" x="450" y="90">kernel</text>
+  <text class="s mid" x="620" y="90">hardware</text>
+  <!-- emulated e1000 -->
+  <path d="M 190 156 L 190 210" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 365 156 L 365 210" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 535 156 L 535 210" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <text x="40" y="136"><tspan class="b">emulated e1000</tspan><tspan class="s" dx="12">every register access</tspan></text>
+  <circle cx="100" cy="194" r="8" fill="#994637" stroke="#2a2732" stroke-width="1.5"/>
+  <path d="M 100 194 L 431 194" fill="none" stroke="#994637" stroke-width="3.5" marker-end="url(#a-cost-l)"/>
+  <path d="M 450 186 L 450 168 L 302 168" fill="none" stroke="#994637" stroke-width="3.5" marker-end="url(#a-cost-l)"/>
+  <circle cx="450" cy="194" r="8" fill="#994637" stroke="#2a2732" stroke-width="1.5"/>
+  <circle cx="280" cy="168" r="11" fill="#994637" stroke="#2a2732" stroke-width="1.5"/>
+  <!-- virtio -->
+  <path d="M 190 260 L 190 314" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 365 260 L 365 314" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 535 260 L 535 314" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <text x="40" y="240"><tspan class="b">virtio</tspan><tspan class="s" dx="12">one notification per batch</tspan></text>
+  <circle cx="100" cy="298" r="8" fill="#994637" stroke="#2a2732" stroke-width="1.5"/>
+  <path d="M 100 298 L 431 298" fill="none" stroke="#994637" stroke-width="2.5" stroke-dasharray="9 7" marker-end="url(#a-cost-l)"/>
+  <path d="M 450 290 L 450 272 L 302 272" fill="none" stroke="#994637" stroke-width="2.5" stroke-dasharray="9 7" marker-end="url(#a-cost-l)"/>
+  <circle cx="450" cy="298" r="8" fill="#994637" stroke="#2a2732" stroke-width="1.5"/>
+  <circle cx="280" cy="272" r="11" fill="#994637" stroke="#2a2732" stroke-width="1.5"/>
+  <!-- vhost-net -->
+  <path d="M 190 364 L 190 418" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 365 364 L 365 418" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 535 364 L 535 418" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <text x="40" y="344"><tspan class="b">vhost-net</tspan><tspan class="s" dx="12">QEMU stays asleep</tspan></text>
+  <circle cx="100" cy="402" r="8" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+  <path d="M 100 402 L 428 402" fill="none" stroke="#d68228" stroke-width="3.5" marker-end="url(#a-sub-l)"/>
+  <circle cx="280" cy="376" r="8" fill="#f4f1ea" stroke="#6c6676" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <circle cx="450" cy="402" r="11" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+  <!-- vhost-user -->
+  <path d="M 190 468 L 190 522" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 365 468 L 365 522" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 535 468 L 535 522" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <text x="40" y="448"><tspan class="b">vhost-user</tspan><tspan class="s" dx="12">a process picked for the job</tspan></text>
+  <circle cx="100" cy="506" r="8" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+  <path d="M 100 506 L 431 506" fill="none" stroke="#d68228" stroke-width="3.5" marker-end="url(#a-sub-l)"/>
+  <path d="M 450 498 L 450 480 L 302 480" fill="none" stroke="#d68228" stroke-width="3.5" marker-end="url(#a-sub-l)"/>
+  <circle cx="450" cy="506" r="8" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+  <rect x="269" y="469" width="22" height="22" rx="3" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+  <!-- VFIO, SR-IOV -->
+  <path d="M 190 572 L 190 626" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 365 572 L 365 626" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <path d="M 535 572 L 535 626" fill="none" stroke="#ddd7cb" stroke-width="1"/>
+  <text x="40" y="552"><tspan class="b">VFIO, SR-IOV</tspan><tspan class="s" dx="12">a real card, fenced by the IOMMU</tspan></text>
+  <circle cx="100" cy="610" r="8" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+  <path d="M 100 610 L 598 610" fill="none" stroke="#d68228" stroke-width="3.5" marker-end="url(#a-sub-l)"/>
+  <circle cx="450" cy="610" r="8" fill="#f4f1ea" stroke="#6c6676" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <circle cx="280" cy="584" r="8" fill="#f4f1ea" stroke="#6c6676" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <circle cx="620" cy="610" r="11" fill="#d68228" stroke="#2a2732" stroke-width="1.5"/>
+</svg>

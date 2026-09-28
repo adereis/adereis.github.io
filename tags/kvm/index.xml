@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>KVM on Ademar Reis</title><link>https://ademar.org/tags/kvm/</link><description>Recent content in KVM on Ademar Reis</description><image><title>Ademar Reis</title><url>https://ademar.org/img/social-card.png</url><link>https://ademar.org/img/social-card.png</link></image><generator>Hugo</generator><language>en-US</language><lastBuildDate>Sun, 27 Sep 2026 22:27:06 -0400</lastBuildDate><atom:link href="https://ademar.org/tags/kvm/index.xml" rel="self" type="application/rss+xml"/><item><title>Virtualization: The CPU Is the Easy Part</title><link>https://ademar.org/posts/virtualization-the-cpu-is-the-easy-part/</link><pubDate>Sun, 27 Sep 2026 22:27:06 -0400</pubDate><guid>https://ademar.org/posts/virtualization-the-cpu-is-the-easy-part/</guid><description>What happens when a virtual machine runs your code: most instructions run straight on the processor, and the interesting engineering lives where the host has to step in. One store instruction, followed from an emulated network card to a real one, and what the same pattern did to memory, clocks, and Kubernetes.</description><content:encoded><![CDATA[<p>Here&rsquo;s a CPU instruction:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">MOV EAX, EDX
+</span></span></code></pre></div><p>It copies one processor register into another.</p>
+<p>Every program you&rsquo;ve ever written ends up as a list of instructions like that one, sitting in memory.
+The processor keeps a handful of tiny, fast storage slots of its own, called registers, and one of them always holds the address of the next instruction to run.
+Running a program is the processor fetching that instruction, doing what it says, and moving on to the next one, billions of times a second.
+Most instructions are that small: they change a register, or they read or write memory at an address another register holds.</p>
+<p><img alt="A program is a list of instructions in memory: the instruction pointer holds the address of the next one to run, MOV EAX, EDX copies one register into another inside the processor, and a register like EBX can hold a memory address for the next instruction to write to." height="364" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/cpu-basics.svg" width="720"></p>
+<p>Run <code>MOV EAX, EDX</code> inside a virtual machine, and nothing happens to the hypervisor.
+The processor executes it, moves on to the next instruction, and the software in charge of the virtual machine never finds out.</p>
+<p>If you picture a VM as a layer that reads the guest&rsquo;s code and carries it out, that&rsquo;s the picture this post is here to replace.
+The walk I&rsquo;m going to take through it is borrowed from a talk a colleague gave to Red Hat&rsquo;s KVM team in 2013.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>
+His slide for this instruction ends with five words that are still the best summary I know:</p>
+<blockquote>
+<p>KVM is unaware of it.</p>
+</blockquote>
+<p>The processor did the work, of course, but no software stood between it and the guest while it did.</p>
+<h2 id="your-vm-is-a-process">Your VM is a process</h2>
+<p>Now look at the host.
+On a Linux machine running KVM, <code>ps</code> shows each virtual machine as an ordinary process, usually <code>qemu-kvm</code> or <code>qemu-system-x86_64</code>.
+Each virtual CPU is a thread inside it.
+Most of that process&rsquo;s memory is the guest&rsquo;s RAM (not all of it, and not always resident, but most).
+<code>kill -9</code> works on it about the way pulling the power cord works on a real machine.</p>
+<p>Each vCPU thread spends its life in a loop.
+This is the real KVM API, reduced to its skeleton:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">ioctl</span><span class="p">(</span><span class="n">vcpu_fd</span><span class="p">,</span> <span class="n">KVM_RUN</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="n">run</span><span class="o">-&gt;</span><span class="n">exit_reason</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/* handle whatever KVM handed back to userspace */</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>That <code>ioctl</code> is where the thread hands the processor to the guest.
+It returns only when something needs QEMU&rsquo;s attention.
+The <code>switch</code> is the part people picture as &ldquo;the hypervisor,&rdquo; and it only ever sees the expensive cases.
+Plenty of events stop in KVM, inside the kernel, get handled there, and the guest resumes without QEMU waking up at all.</p>
+<p>So instead of a layer, picture three paths: a fast path where the guest runs directly on the processor, a kernel path where KVM steps in briefly, and a userspace path where QEMU does real work.
+Nearly everything interesting in virtualization is about which of those paths an event takes, and how often.</p>
+<p><img alt="The guest&rsquo;s code runs directly on the CPU until a VM exit drops control to KVM in the host kernel, which handles most exits and makes a VM entry back into the guest; only some exits go on up to QEMU in the host&rsquo;s userspace." height="488" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/kvm-run-loop.svg" width="720"></p>
+<p>A word about where I&rsquo;m standing.
+From 2011 to 2022 I was one of the managers in the Red Hat group that worked on the Linux virtualization stack, upstream and in RHEL and the products built on it.
+I started with one small team and left with about fifty people.
+I was in the design discussions, the patch reviews, the release planning, and the arguments about what belonged upstream.
+I didn&rsquo;t write this code, and my teams wrote only part of it.
+It&rsquo;s open source, and much of it came from the wider community, from teams before mine, and from teams under other managers.
+These days I lead engineering for a managed Kubernetes service on Azure.
+Its nodes are virtual machines too, on Microsoft&rsquo;s hypervisor rather than KVM, and most of the people I work with meet all of this only from above.
+This post is for them.</p>
+<h2 id="the-trap-door">The trap door</h2>
+<p>Modern x86 processors have a mode built for this.
+The host fills in a control structure that lists the events it wants to hear about, then enters the guest.
+From then on, the guest&rsquo;s instructions run natively, and the processor watches for the listed events.
+When one happens, it saves the guest&rsquo;s state and jumps back to the host.
+That&rsquo;s a <strong>VM exit</strong>.
+Going back in is a <strong>VM entry</strong>.</p>
+<p>It wasn&rsquo;t always possible.
+In 1974, Popek and Goldberg wrote down what an architecture needs in order to be virtualized this way: every instruction that could reveal or change the real machine&rsquo;s state has to trap when a guest runs it, and x86 didn&rsquo;t meet that bar.
+A handful of sensitive instructions simply behaved differently for a guest, with no trap.
+So VMware rewrote guest code on the fly (binary translation), and Xen modified the guest OS to call the hypervisor instead of touching the hardware (paravirtualization).
+Intel&rsquo;s VT-x and AMD-V added the trap door to the processor around 2005 and 2006, and an unmodified guest could run without either trick.</p>
+<p>Binary translation mostly went away after that, but paravirtualization stayed.
+It stopped being how the CPU works and became how devices, clocks, and scheduling work, and it comes back three more times in this post.</p>
+<h2 id="memory-the-cost-moved">Memory: the cost moved</h2>
+<p>Here&rsquo;s the second instruction:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">MOV [addr], EDX
+</span></span></code></pre></div><p>The same MOV, but now it writes a register into memory, at the address <code>addr</code>.
+In an ordinary process, that address isn&rsquo;t a real location in RAM.
+Every process gets its own private view of memory, so two processes can use the same address and mean different bytes.
+The OS keeps a map for each one, called page tables, from these virtual addresses to physical memory, and the processor follows that map by itself.
+Following it takes several memory reads (four, on a typical x86-64 machine), so the processor keeps a small cache of recent answers, the TLB, and most accesses never walk the map at all.</p>
+<p>A guest adds a second layer.
+The guest OS believes it&rsquo;s translating to physical memory, but its &ldquo;physical&rdquo; memory is just memory inside the QEMU process, which the host translates again.</p>
+<p><img alt="In a process, a virtual address goes through the OS&rsquo;s page tables to physical memory; in a VM, it goes through the guest&rsquo;s page tables to guest &ldquo;physical&rdquo; memory and then through the host&rsquo;s page tables to real memory, and in both the TLB remembers recent answers so most accesses skip the whole chain." height="482" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/address-translation.svg" width="720"></p>
+<p>The first answer was shadow page tables.
+KVM watched the guest edit its own page tables and maintained a combined copy the real processor could use.
+It worked, but keeping the copy in sync cost a steady stream of exits.</p>
+<p>In 2007 and 2008, AMD&rsquo;s NPT and Intel&rsquo;s EPT moved the second translation into hardware.
+The processor walks the guest&rsquo;s tables and the host&rsquo;s tables by itself, and an ordinary guest page fault no longer needs KVM at all.</p>
+<p>That didn&rsquo;t make translation free.
+On a TLB miss, every step of the guest&rsquo;s walk now needs a walk of the host&rsquo;s tables too.
+Intel&rsquo;s own engineers wrote that this can take the number of memory references needed to fill one TLB entry from four to twenty-four.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p><img alt="On bare metal a TLB miss reads four page-table entries; in a VM each of those reads, and the final address of the data, first needs its own four-step walk of the host&rsquo;s tables, so four references become twenty-four." height="436" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/page-walk.svg" width="720"></p>
+<p>Huge pages help here, because a bigger page means fewer TLB misses and a shorter walk.
+If you&rsquo;ve ever requested them in a pod spec, you made a decision about translation pressure, whether or not anyone called it that.</p>
+<p>Silicon took the work off the software path and left a cheaper version of the same cost behind, somewhere the guest can&rsquo;t see or account for.
+That&rsquo;s the pattern of the whole post, which is why this section can be short.</p>
+<h2 id="io-one-store-five-endings">I/O: one store, five endings</h2>
+<p>Here&rsquo;s the third instruction, and the one this post is really about:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">MOV [addr], EDX
+</span></span></code></pre></div><p>The same bytes as the last one.
+This time, though, <code>addr</code> isn&rsquo;t memory.
+Devices have addresses too: a network card or a disk controller answers at a small range of them, and writing there is how a driver tells the device to do something.
+In a VM there is no card at that address, so the host leaves it out of its own page tables on purpose, and the store causes a VM exit.
+Somebody has to pretend to be the card.</p>
+<p><img alt="The same instruction lands in three places: a register move and a store to ordinary memory never reach the host, while the same store aimed at a device register causes a VM exit." height="434" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/three-stores.svg" width="720"></p>
+<p>That store is where the host has to step in, and what happened to it over the last twenty years is the story of virtualized I/O.
+It has had five answers.</p>
+<p>The oldest answer is to let it trap and emulate a real card.
+Say the guest has an Intel e1000 network card, because nearly every OS ships a driver for one.
+The driver talks to the card through its registers: a write to say there&rsquo;s a packet waiting, then more reads and writes to handle the interrupt once it&rsquo;s sent.
+Each of those is a store or a load like the one above.
+Each one exits to KVM, KVM sees a device address and returns to QEMU, and QEMU runs code that behaves the way the real card&rsquo;s register would.
+That&rsquo;s a round trip all the way out to userspace for every register access, and a busy card makes a lot of them.</p>
+<p>It&rsquo;s perfectly compatible, and slow.</p>
+<p>The second answer, virtio, stops pretending to be real hardware.
+virtio is a family of devices designed for virtual machines, and the guest knows it&rsquo;s talking to one.
+Instead of imitating a real card&rsquo;s registers, the guest and host agree on a simple contract: rings of descriptors (&ldquo;here&rsquo;s a buffer, send it&rdquo;) in memory they share, and a notification that either side can ask the other to skip while it&rsquo;s already busy.
+Under load, a stream of packets can flow with hardly any exits at all.
+The guest&rsquo;s store to a device register, that third <code>MOV</code>, mostly stops happening.
+That&rsquo;s the whole trick: virtio didn&rsquo;t make exits cheaper, it made them rare.
+This is the first place paravirtualization comes back: the guest cooperates with the host because it knows it&rsquo;s in a VM.</p>
+<p>The third answer, vhost-net, deals with where that notification lands.
+With plain virtio it still wakes QEMU, which then pushes the packets through the host kernel.
+vhost-net moves the backend into the host kernel itself, right where the packets are headed anyway.
+On the common path, QEMU never wakes up.</p>
+<p>The fourth, vhost-user, keeps the idea and changes the destination.
+The backend lives in some other userspace process, usually one somebody chose on purpose: a packet-processing data plane like Open vSwitch with DPDK, or a storage engine like SPDK.</p>
+<p>The fifth answer is to give the guest a real device.
+With VFIO, often paired with SR-IOV (a card that presents itself as many small cards), the guest&rsquo;s <code>MOV</code> to a device register lands on actual hardware.
+The device then writes straight into guest memory, and the IOMMU, which does for devices what page tables do for programs, keeps it from writing anywhere else.
+Nothing is emulated on the data path.</p>
+<p><img alt="Five ways to handle one device access: an emulated card goes down to KVM and back up to QEMU on every register access, virtio makes the same trip once per batch, vhost-net stops in the host kernel, vhost-user goes back up to a separate process chosen for the job, and device assignment goes straight down to a real card with no host software involved." height="640" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/io-ladder.svg" width="720"></p>
+<p>Every one of those steps moved the mediation somewhere cheaper, or handed it to something more specialized.
+And every one paid for that with something: portability, visibility into what the guest is doing, compatibility with guests that don&rsquo;t know they&rsquo;re virtualized, or the host&rsquo;s freedom to change its mind later.</p>
+<p>You&rsquo;ve probably picked a rung already.
+On EC2, enhanced networking uses SR-IOV, and so does accelerated networking on Azure.
+If either one is on, your VM&rsquo;s network card is a slice of a real one, and the host is mostly out of the way.</p>
+<p>Live migration shows the price most clearly.
+When every device is emulated, moving a running VM to another host is a property of the platform: copy the memory and the device state, and resume on the other side.
+With an assigned device, part of the VM&rsquo;s state lives inside a real card the host doesn&rsquo;t control.
+It can still work (some drivers support migrating that state, and both KubeVirt and Azure unplug the SR-IOV interface before a move and plug a fresh one in after it), but migration becomes a property of the device and the stack around it.</p>
+<p>This is also where KVM&rsquo;s design paid off.
+KVM is a module in the Linux kernel, and QEMU is a Linux process, so both could lean on everything Linux already had: its scheduler, its memory manager, its I/O stack, its drivers.
+A hypervisor that runs beneath the OS, instead of inside it, has to bring its own scheduler and memory manager.
+Containers made the same bet on reusing the kernel and took it further, because every container on a host shares that one kernel.
+What keeps them apart is the kernel&rsquo;s own bookkeeping (namespaces and cgroups), while VMs are kept apart by the processor&rsquo;s virtualization hardware.</p>
+<h2 id="time-and-scheduling">Time and scheduling</h2>
+<p>A vCPU is a thread on the host.
+The host can stop running it at any moment, to run another VM or anything else, and the guest gets no say.</p>
+<p>The guest&rsquo;s clocks feel that first.
+A native OS reads a counter on the processor and trusts it.
+In a VM, that counter has to keep making sense while the vCPU is paused, when its thread moves to another physical CPU, and when the whole VM moves to another host with a different processor.
+The hardware can offset and scale the counter.
+KVM also gives the guest a paravirtual clock, kvmclock, in a page of shared memory, so the guest can compute a time the host agrees with.
+That&rsquo;s the second place paravirtualization comes back.</p>
+<p>Scheduling feels it next.
+When a vCPU has nothing to do, the guest runs <code>HLT</code>, which exits, and the host gets the real CPU back.
+That part is easy.
+Locks and interrupt handling are the hard cases.
+An OS is full of tricks for using real hardware efficiently, and a good virtualization stack has to keep all of them working, invisibly when it can and with the guest&rsquo;s help when it can&rsquo;t.</p>
+<p>Take a spinlock inside the guest: one vCPU takes it, and then the host deschedules that vCPU&rsquo;s thread.
+Another vCPU in the same guest starts spinning on the lock, burning a real host CPU while it waits for a holder that isn&rsquo;t running.
+Paravirtual spinlocks let the waiter give up after a while and sleep, and the vCPU that releases the lock wakes it with a call to the host.
+That&rsquo;s the third place paravirtualization comes back.</p>
+<p>Then there&rsquo;s steal time.
+For every vCPU, the host counts how long it was ready to run but wasn&rsquo;t, because the host had something else on the real CPU.
+It writes that count into guest memory, and the guest kernel reports it as the <code>st</code> column in <code>top</code>.
+It doesn&rsquo;t count time the vCPU spent halted with nothing to do.
+That&rsquo;s idle, and idle is the guest&rsquo;s own business.</p>
+<p><img alt="Steal time is the slice when a vCPU was ready to run but another VM held the physical CPU; time the vCPU spends halted with nothing to run is idle, not steal." height="324" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/steal-time.svg" width="720"></p>
+<p>Steal time is where the abstraction admits it&rsquo;s an abstraction.
+virtio, kvmclock, and the spinlock trick are private deals between the guest kernel and the host, and nothing above the kernel sees them.
+<code>%st</code> is different.
+It&rsquo;s the guest being told, as a number anyone can read in <code>top</code>, that for that slice of time it didn&rsquo;t own the processor at all.</p>
+<p>If your service runs on cloud VMs, that number is already part of your latency.
+A request that arrives while your vCPU is stolen just waits, and nothing in your own process&rsquo;s CPU graphs explains the delay.
+Most dashboards don&rsquo;t graph <code>%st</code>, and if you&rsquo;re ever digging into service latency, I&rsquo;d consider putting it right next to p99.</p>
+<h2 id="why-its-under-kubernetes-again">Why it&rsquo;s under Kubernetes again</h2>
+<p>So silicon moved the boundary rather than finishing the job: once ordinary instructions ran natively, the hard problems went out into memory, devices, time, scheduling, migration, and trust.</p>
+<p>You can watch that happen in the KVM Forum programs.
+In 2011 the program was full of device assignment, virtio, qcow2, and performance work.
+By 2021 there were talks on secure migration of encrypted VMs, on Kata Containers, and on rust-vmm, a set of Rust building blocks for new VMMs.
+The old topics were still there, next to the new ones.</p>
+<p>Meanwhile, Kubernetes made the VM layer easy to forget.
+Your node is probably a VM, but you think in pods.
+Your pod&rsquo;s CPU limit is a cgroup quota, enforced by a kernel that is itself a guest, on vCPUs that can be stolen from.</p>
+<p>Then multi-tenancy brought the VM back from the other side.
+Containers share a kernel, and a shared kernel is a thin wall between two customers who don&rsquo;t trust each other.
+So the hardware boundary came back behind a container interface.
+Kata Containers runs each pod inside a lightweight VM.
+Firecracker, which AWS built for Lambda, is a VMM with a deliberately small device model and a streamlined way of loading the kernel, built for workloads that live for seconds.
+libkrun, whose author was on one of my teams, turns the idea into a library: any program can use it to run a process inside its own lightweight VM, and the container runtime crun uses it to put a container behind that boundary.</p>
+<p><img alt="Ordinary pods sit directly on the node&rsquo;s kernel and share it, while each Kata pod gets its own small VM and its own kernel on top of that same node kernel, putting a hardware-enforced boundary between them." height="424" loading="lazy" src="/posts/virtualization-the-cpu-is-the-easy-part/kata-pod.svg" width="720"></p>
+<p>It went the other direction too.
+KubeVirt, which Red Hat ships as OpenShift Virtualization, makes a full virtual machine a Kubernetes resource, scheduled and managed next to pods.
+These stacks include upstream work from the teams I used to manage.</p>
+<h2 id="confidential-computing">Confidential computing</h2>
+<p>Everything above assumes a host that can see everything.
+It reads guest memory to emulate a device, copies guest pages to migrate a VM, and looks inside a hung guest to debug it.
+Most of the ladder was built on that visibility.</p>
+<p>Confidential computing takes it away on purpose.
+AMD&rsquo;s SEV-SNP and Intel&rsquo;s TDX encrypt a guest&rsquo;s memory with keys the host doesn&rsquo;t have, and use attestation so the guest&rsquo;s owner can check what it&rsquo;s running on.
+Trust moves to the processor, its firmware, and whoever verifies the measurements.</p>
+<p>The machinery in this post gets harder.
+The host can&rsquo;t read the guest&rsquo;s buffers, so I/O goes through pages the guest explicitly shares, usually with an extra copy.
+Migration needs a way to move protected state without exposing it.
+Debugging a guest you can&rsquo;t look inside is its own problem.</p>
+<p>I saw the beginning of this turn before I left virtualization in 2022, and everything since is reading, not experience.</p>
+<p>The last twenty years were about making mediation cheaper by leaning on a host that could see everything.
+There&rsquo;s work now, under the name TDISP, on letting a trusted device write straight into a protected guest&rsquo;s memory.
+Does that become the ordinary path, the way virtio did, or does confidential I/O keep paying for the extra copy?
+And if the fast path does come back, how much trust does it have to hand the device to get there?
+I&rsquo;m following it from a distance now, as a reader, and mostly for the fun of it.</p>
+<p><em>Human Directed, AI Articulated.
+This post was co-written with Claude.
+The judgments, and any mistakes, are mine.</em></p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Ronen Hod, &ldquo;High-Level Introduction to the Low-Level of Virtualization,&rdquo; an internal Red Hat talk, 2013. The progression from a register move to a memory store to a device store is his. Where this post takes it afterward is mine.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><em>Intel Technology Journal</em>, volume 14, issue 3 (2010), page 94. The count is for building the translation on a TLB miss with four-level tables on both sides, not for every memory access. A TLB hit skips the walk entirely.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+]]></content:encoded></item></channel></rss>
