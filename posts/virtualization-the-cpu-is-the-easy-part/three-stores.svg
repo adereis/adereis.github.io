@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 434" width="720" height="434" role="img" aria-labelledby="t d">
+  <title id="t">The same instruction, three destinations</title>
+  <desc id="d">Three rows. A register-to-register move and a store to ordinary memory both run without the host doing anything; the second may cost more on a TLB miss. The same store aimed at a device register is the one that causes a VM exit into KVM and sometimes out to QEMU.</desc>
+
+  <style>
+    .plate { fill: #eef2f3; stroke: #d1d9dc; stroke-width: 1; }
+    text   { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; fill: #1d2a2f; }
+    .mono  { font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .h     { font-size: 24px; font-weight: 600; }
+    .b     { font-size: 22px; font-weight: 600; }
+    .l     { font-size: 22px; }
+    .s     { font-size: 22px; fill: #5c6b71; }
+    .mid   { text-anchor: middle; }
+    .end   { text-anchor: end; }
+  </style>
+  <defs>
+    <marker id="a-ink" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-ink-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-sub" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-sub-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-cost" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <marker id="a-cost-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" fill="#eef2f3"/><line x1="4" y1="0" x2="4" y2="8" stroke="#834d78" stroke-width="2"/></pattern>
+  </defs>
+
+  <rect class="plate" x="0.5" y="0.5" width="719" height="433" rx="14"/>
+
+  <text class="s" x="40" y="58">the guest runs</text>
+  <text class="s" x="420" y="58">what the host does</text>
+  <rect x="40" y="84" width="320" height="84" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <path d="M 362 126 L 398 126" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <text class="l mono" x="58" y="119.42">MOV EAX, EDX</text>
+  <text class="s" x="58" y="148.42">register to register</text>
+  <text class="b" x="420" y="119.42">nothing</text>
+  <text class="s" x="420" y="148.42">no exit at all</text>
+  <rect x="40" y="194" width="320" height="84" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <path d="M 362 236 L 398 236" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <text class="l mono" x="58" y="229.42">MOV [addr], EDX</text>
+  <text class="s" x="58" y="258.42">addr is ordinary RAM</text>
+  <text class="b" x="420" y="229.42">nothing</text>
+  <text class="s" x="420" y="258.42">TLB misses cost more</text>
+  <!-- the store that reaches the host: filled, cost-edged, heavier arrow -->
+  <rect x="40" y="304" width="320" height="84" rx="10" fill="#bdcbcf" stroke="#834d78" stroke-width="2.5"/>
+  <path d="M 362 346 L 395 346" fill="none" stroke="#834d78" stroke-width="3.5" marker-end="url(#a-cost-l)"/>
+  <text class="l mono" x="58" y="339.42">MOV [addr], EDX</text>
+  <text class="s" x="58" y="368.42">addr is a device</text>
+  <text class="b" x="420" y="339.42">a VM exit</text>
+  <text class="s" x="420" y="368.42">into KVM, maybe QEMU</text>
+</svg>

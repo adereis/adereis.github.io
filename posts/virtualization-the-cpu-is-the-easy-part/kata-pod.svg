@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 424" width="720" height="424" role="img" aria-labelledby="t d">
+  <title id="t">An ordinary pod against a Kata pod</title>
+  <desc id="d">Two pairs of pods on the same node kernel. On the left, pod A and pod B sit directly on it and share it. On the right, each pod runs inside its own small virtual machine with its own kernel, so a hardware-enforced boundary separates them before either reaches the node's kernel.</desc>
+
+  <style>
+    .plate { fill: #eef2f3; stroke: #d1d9dc; stroke-width: 1; }
+    text   { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; fill: #1d2a2f; }
+    .mono  { font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .h     { font-size: 24px; font-weight: 600; }
+    .b     { font-size: 22px; font-weight: 600; }
+    .l     { font-size: 22px; }
+    .s     { font-size: 22px; fill: #5c6b71; }
+    .mid   { text-anchor: middle; }
+    .end   { text-anchor: end; }
+  </style>
+  <defs>
+    <marker id="a-ink" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-ink-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-sub" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-sub-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-cost" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <marker id="a-cost-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" fill="#eef2f3"/><line x1="4" y1="0" x2="4" y2="8" stroke="#834d78" stroke-width="2"/></pattern>
+  </defs>
+
+  <rect class="plate" x="0.5" y="0.5" width="719" height="423" rx="14"/>
+
+  <text class="h" x="40" y="60">an ordinary pod</text>
+  <text class="h" x="370" y="60">a Kata pod</text>
+  <!-- left: two pods sit directly on the node's kernel -->
+  <rect x="40" y="180" width="130" height="76" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="l mid" x="105" y="225.92">pod A</text>
+  <rect x="190" y="180" width="130" height="76" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="l mid" x="255" y="225.92">pod B</text>
+  <rect x="40" y="286" width="280" height="60" rx="10" fill="#bdcbcf"/>
+  <text class="l mid" x="180" y="323.92">node kernel</text>
+  <text class="s mid" x="180" y="392">pods share one kernel</text>
+  <!-- right: each pod inside its own small VM, with its own kernel, on the same node kernel -->
+  <rect x="370" y="90" width="160" height="176" rx="12" fill="none" stroke="#834d78" stroke-width="2.5" stroke-dasharray="9 6"/>
+  <rect x="380" y="100" width="140" height="76" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="l mid" x="450" y="145.92">pod A</text>
+  <rect x="380" y="196" width="140" height="60" rx="10" fill="#bdcbcf"/>
+  <text class="l mid" x="450" y="233.92">kernel</text>
+  <rect x="540" y="90" width="160" height="176" rx="12" fill="none" stroke="#834d78" stroke-width="2.5" stroke-dasharray="9 6"/>
+  <rect x="550" y="100" width="140" height="76" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="l mid" x="620" y="145.92">pod B</text>
+  <rect x="550" y="196" width="140" height="60" rx="10" fill="#bdcbcf"/>
+  <text class="l mid" x="620" y="233.92">kernel</text>
+  <rect x="370" y="286" width="330" height="60" rx="10" fill="#bdcbcf"/>
+  <text class="l mid" x="535" y="323.92">node kernel with KVM</text>
+  <text class="s mid" x="535" y="392">a VM and a kernel per pod</text>
+</svg>

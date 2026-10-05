@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 488" width="720" height="488" role="img" aria-labelledby="t d">
+  <title id="t">Three paths through the stack</title>
+  <desc id="d">Four layers, top to bottom: the guest, QEMU in the host's userspace, the host kernel with KVM, and the CPU. On the fast path the guest's code runs directly on the CPU, past the host. On the kernel path a VM exit drops to KVM, which handles it and makes a VM entry back into the guest without waking QEMU. On the userspace path some exits go on up to QEMU, which then calls KVM_RUN again.</desc>
+
+  <style>
+    .plate { fill: #eef2f3; stroke: #d1d9dc; stroke-width: 1; }
+    text   { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; fill: #1d2a2f; }
+    .mono  { font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .h     { font-size: 24px; font-weight: 600; }
+    .b     { font-size: 22px; font-weight: 600; }
+    .l     { font-size: 22px; }
+    .s     { font-size: 22px; fill: #5c6b71; }
+    .mid   { text-anchor: middle; }
+    .end   { text-anchor: end; }
+  </style>
+  <defs>
+    <marker id="a-ink" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-ink-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-sub" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-sub-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-cost" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <marker id="a-cost-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" fill="#eef2f3"/><line x1="4" y1="0" x2="4" y2="8" stroke="#834d78" stroke-width="2"/></pattern>
+  </defs>
+
+  <rect class="plate" x="0.5" y="0.5" width="719" height="487" rx="14"/>
+
+  <!-- the stack, top to bottom -->
+  <rect x="40" y="40" width="640" height="76" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="h" x="62" y="70.64">guest</text>
+  <text class="s" x="62" y="102.64">its own kernel and apps</text>
+  <rect x="432" y="160" width="248" height="76" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="b" x="448" y="191.42">QEMU</text>
+  <text class="s" x="448" y="220.42">an ordinary process</text>
+  <rect x="250" y="280" width="430" height="76" rx="10" fill="#bdcbcf"/>
+  <text class="b" x="272" y="311.42">host kernel, with KVM</text>
+  <text class="s" x="272" y="340.42">handles most exits, then resumes</text>
+  <rect x="40" y="400" width="640" height="56" rx="10" fill="none" stroke="#1d2a2f" stroke-width="1.5"/>
+  <text class="b" x="62" y="435.92">hardware: the CPU</text>
+  <!-- the fast path: the guest's own code runs on the CPU, past the host -->
+  <path d="M 70 116 L 70 400" fill="none" stroke="#59a1af" stroke-width="10"/>
+  <text class="b" x="90" y="236">fast path</text>
+  <text class="s" x="90" y="266">runs directly</text>
+  <text class="s" x="90" y="294">on the CPU</text>
+  <!-- the kernel path: exit down to KVM, entry back up, past QEMU -->
+  <path d="M 272 118 L 272 269" fill="none" stroke="#834d78" stroke-width="3.5" stroke-dasharray="8 6" marker-end="url(#a-cost-l)"/>
+  <text class="b" x="286" y="188">VM exit</text>
+  <path d="M 412 278 L 412 127" fill="none" stroke="#59a1af" stroke-width="3.5" marker-end="url(#a-sub-l)"/>
+  <text class="b end" x="398" y="230">VM entry</text>
+  <!-- the userspace path: some exits go up to QEMU, which calls KVM_RUN again -->
+  <path d="M 480 278 L 480 244" fill="none" stroke="#834d78" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#a-cost)"/>
+  <text class="s" x="494" y="265">some exits</text>
+  <path d="M 650 238 L 650 272" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+</svg>

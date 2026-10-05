@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 436" width="720" height="436" role="img" aria-labelledby="t d">
+  <title id="t">Four memory references become twenty-four</title>
+  <desc id="d">On bare metal, a TLB miss means reading four page-table entries before the data. In a VM, each of those four reads, and the final address of the data, first needs its own four-step walk of the host's tables, so filling one TLB entry takes twenty-four memory references instead of four.</desc>
+
+  <style>
+    .plate { fill: #eef2f3; stroke: #d1d9dc; stroke-width: 1; }
+    text   { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; fill: #1d2a2f; }
+    .mono  { font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace; }
+    .h     { font-size: 24px; font-weight: 600; }
+    .b     { font-size: 22px; font-weight: 600; }
+    .l     { font-size: 22px; }
+    .s     { font-size: 22px; fill: #5c6b71; }
+    .mid   { text-anchor: middle; }
+    .end   { text-anchor: end; }
+  </style>
+  <defs>
+    <marker id="a-ink" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-ink-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#1d2a2f"/></marker>
+    <marker id="a-sub" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-sub-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#59a1af"/></marker>
+    <marker id="a-cost" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="8" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <marker id="a-cost-l" viewBox="0 0 10 8" refX="4" refY="4" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="12" orient="auto"><path d="M0 0L10 4L0 8z" fill="#834d78"/></marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" fill="#eef2f3"/><line x1="4" y1="0" x2="4" y2="8" stroke="#834d78" stroke-width="2"/></pattern>
+  </defs>
+
+  <rect class="plate" x="0.5" y="0.5" width="719" height="435" rx="14"/>
+
+  <text class="h" x="40" y="60">bare metal</text>
+  <text class="h" x="330" y="60">in a VM</text>
+  <!-- bare metal: the guest walk alone -->
+  <rect x="60" y="112" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <rect x="60" y="162" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <rect x="60" y="212" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <rect x="60" y="262" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <rect x="60" y="312" width="40" height="40" rx="4" fill="none" stroke="#5c6b71" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text class="s" x="114" y="340">data</text>
+  <!-- in a VM: every step of the guest walk needs a host walk first -->
+  <text class="s mid" x="425" y="96">host walk</text>
+  <text class="s mid" x="586" y="96">guest</text>
+  <rect x="330" y="112" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="380" y="112" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="430" y="112" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="480" y="112" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="566" y="112" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <path d="M 526 132 L 556 132" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <rect x="330" y="162" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="380" y="162" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="430" y="162" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="480" y="162" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="566" y="162" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <path d="M 526 182 L 556 182" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <rect x="330" y="212" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="380" y="212" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="430" y="212" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="480" y="212" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="566" y="212" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <path d="M 526 232 L 556 232" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <rect x="330" y="262" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="380" y="262" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="430" y="262" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="480" y="262" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="566" y="262" width="40" height="40" rx="4" fill="#59a1af" stroke="#1d2a2f" stroke-width="1.5"/>
+  <path d="M 526 282 L 556 282" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <rect x="330" y="312" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="380" y="312" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="430" y="312" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="480" y="312" width="40" height="40" rx="4" fill="#834d78"/>
+  <rect x="566" y="312" width="40" height="40" rx="4" fill="none" stroke="#5c6b71" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text class="s" x="620" y="340">data</text>
+  <path d="M 526 332 L 556 332" fill="none" stroke="#1d2a2f" stroke-width="1.5" marker-end="url(#a-ink)"/>
+  <text class="b" x="40" y="404">4 references</text>
+  <text class="b" x="330" y="404">24 references</text>
+</svg>
